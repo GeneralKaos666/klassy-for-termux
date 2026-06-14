@@ -9,3 +9,8 @@ CMakeLists.txt.user*
 .cache
 .vscode
 .directory
+.gga
+.clang-format
+.gitlab-ci.yml
+.kde-ci.yml
+.git-blame-ignore-revs

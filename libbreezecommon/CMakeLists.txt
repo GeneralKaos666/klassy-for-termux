@@ -1,4 +1,10 @@
 ################# breezestyle target #################
+if(TARGET Qt${QT_MAJOR_VERSION}::DBus)
+    set(HAVE_QTDBUS ON)
+else()
+    set(HAVE_QTDBUS OFF)
+endif()
+
 set(breezecommon_LIB_SRCS
     breeze.cpp
     breezeboxshadowrenderer.cpp

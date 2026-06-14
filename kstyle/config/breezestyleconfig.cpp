@@ -14,6 +14,7 @@
 #include "dbusmessages.h"
 #endif
 
+#include <KPluginMetaData>
 #include <QDialog>
 #include <QRegularExpression>
 
@@ -26,6 +27,18 @@ Q_DECL_EXPORT QWidget *allocate_kstyle_config(QWidget *parent)
 
 namespace Breeze
 {
+namespace
+{
+QString styleConfigModuleSpecifier()
+{
+    KPluginMetaData metaData(QStringLiteral("kstyle_config/klassystyleconfig"));
+    if (metaData.isValid()) {
+        return QStringLiteral("kstyle_config/klassystyleconfig");
+    }
+
+    return QStringLiteral("libplugins_kstyle_config_klassystyleconfig.so");
+}
+}
 
 //__________________________________________________________________
 StyleConfig::StyleConfig(QWidget *parent)
@@ -36,7 +49,8 @@ StyleConfig::StyleConfig(QWidget *parent)
     QDialog *parentDialog = qobject_cast<QDialog *>(parent);
     if (parentDialog && QCoreApplication::applicationName() == QStringLiteral("systemsettings")) {
         parentDialog->close();
-        system("kcmshell6 kstyle_config/klassystyleconfig &");
+        const QByteArray command = QStringLiteral("kcmshell6 %1 &").arg(styleConfigModuleSpecifier()).toLocal8Bit();
+        system(command.constData());
     }
 
     setupUi(this);

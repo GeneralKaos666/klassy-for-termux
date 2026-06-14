@@ -34,6 +34,29 @@ struct CommandLineProcessResult {
 };
 CommandLineProcessResult processComandLine(QApplication &app, QCommandLineParser &parser);
 
+namespace
+{
+KPluginMetaData pluginMetaDataWithFallback(const QString &preferred, const QString &fallback)
+{
+    KPluginMetaData metaData(preferred);
+    if (!metaData.isValid()) {
+        metaData = KPluginMetaData(fallback);
+    }
+    return metaData;
+}
+
+KPluginMetaData styleConfigMetaData()
+{
+    return pluginMetaDataWithFallback(QStringLiteral("kstyle_config/klassystyleconfig"), QStringLiteral("libplugins_kstyle_config_klassystyleconfig.so"));
+}
+
+KPluginMetaData decorationConfigMetaData()
+{
+    return pluginMetaDataWithFallback(QStringLiteral("org.kde.kdecoration3.kcm/kcm_klassydecoration.so"),
+                                      QStringLiteral("libplugins_org.kde.kdecoration3.kcm_kcm_klassydecoration.so"));
+}
+}
+
 //__________________________________________
 int main(int argc, char *argv[])
 {
@@ -54,8 +77,8 @@ int main(int argc, char *argv[])
     KCMultiDialog dialog;
     dialog.setWindowTitle(i18n("Klassy Settings"));
     dialog.setMinimumWidth(800);
-    dialog.addModule(KPluginMetaData(QStringLiteral("kstyle_config/klassystyleconfig")));
-    dialog.addModule(KPluginMetaData(QStringLiteral("org.kde.kdecoration3.kcm/kcm_klassydecoration.so")));
+    dialog.addModule(styleConfigMetaData());
+    dialog.addModule(decorationConfigMetaData());
     dialog.show();
 
     const auto children = dialog.findChildren<QAbstractScrollArea *>();

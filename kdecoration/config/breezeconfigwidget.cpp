@@ -15,6 +15,7 @@
 #include "renderdecorationbuttonicon.h"
 
 #include <KLocalizedString>
+#include <KPluginMetaData>
 
 #include <QIcon>
 #include <QRegularExpression>
@@ -40,6 +41,18 @@ void cleanupKlassydecorationConfigQrc()
 
 namespace Breeze
 {
+namespace
+{
+QString decorationConfigModuleSpecifier()
+{
+    KPluginMetaData metaData(QStringLiteral("org.kde.kdecoration3.kcm/kcm_klassydecoration.so"));
+    if (metaData.isValid()) {
+        return QStringLiteral("org.kde.kdecoration3.kcm/kcm_klassydecoration.so");
+    }
+
+    return QStringLiteral("libplugins_org.kde.kdecoration3.kcm_kcm_klassydecoration.so");
+}
+}
 
 //_________________________________________________________
 ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const QVariantList & /*args*/)
@@ -50,7 +63,8 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
 {
     // this is a hack to get an Apply button
     if (widget() && QCoreApplication::applicationName() == QStringLiteral("systemsettings")) {
-        system("kcmshell6 org.kde.kdecoration3.kcm/kcm_klassydecoration.so &");
+        const QByteArray command = QStringLiteral("kcmshell6 %1 &").arg(decorationConfigModuleSpecifier()).toLocal8Bit();
+        system(command.constData());
         if (widget()->window()) {
             widget()->window()->close();
         }

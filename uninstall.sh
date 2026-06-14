@@ -17,13 +17,13 @@ confirm() {
 }
 
 uninstall() {
-    sudo make uninstall && echo "Uninstalled successfully!"
+    make uninstall && echo "Uninstalled successfully!"
 }
 
 cleanup() {
     cd $ORIGINAL_DIR
 
-    sudo rm -rf build
+    rm -rf build
 }
 
 # Recreate install manifest and uninstall

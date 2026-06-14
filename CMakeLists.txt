@@ -38,7 +38,7 @@ include(KDEGitCommitHooks)
 
 include(GtkUpdateIconCache)
 
-option(BUILD_QT5 "Build Qt5 style" ON)
+option(BUILD_QT5 "Build Qt5 style" OFF)
 option(BUILD_QT6 "Build with Qt6" ON)
 
 set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
@@ -62,7 +62,12 @@ function(build_Qt5)
 
     if(UNIX AND NOT APPLE AND NOT ANDROID)
         find_package(Qt5 ${QT5_MIN_VERSION} CONFIG REQUIRED DBus)
-        set(HAVE_QTDBUS ${Qt5DBus_FOUND})
+        if(TARGET Qt5::DBus)
+            set(HAVE_QTDBUS ON)
+        else()
+            set(HAVE_QTDBUS OFF)
+        endif()
+        set(HAVE_QTDBUS ${HAVE_QTDBUS} PARENT_SCOPE)
 
         find_package(KF5FrameworkIntegration ${KF5_MIN_VERSION} CONFIG )
         set_package_properties(KF${QT_MAJOR_VERSION}FrameworkIntegration PROPERTIES
@@ -95,6 +100,8 @@ function(build_Qt5)
 
     set(BREEZE_HAVE_KSTYLE ${KF5FrameworkIntegration_FOUND})
     set(BREEZE_HAVE_QTQUICK ${Qt5Quick_FOUND})
+    set(BREEZE_HAVE_KSTYLE ${BREEZE_HAVE_KSTYLE} PARENT_SCOPE)
+    set(BREEZE_HAVE_QTQUICK ${BREEZE_HAVE_QTQUICK} PARENT_SCOPE)
 
     add_subdirectory(kstyle kstyle5)
     add_subdirectory(libbreezecommon libbreezecommon5)
@@ -112,7 +119,12 @@ function(build_Qt6)
 
     if(UNIX AND NOT APPLE AND NOT ANDROID)
         find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
-        set(HAVE_QTDBUS ${Qt6DBus_FOUND})
+        if(TARGET Qt6::DBus)
+            set(HAVE_QTDBUS ON)
+        else()
+            set(HAVE_QTDBUS OFF)
+        endif()
+        set(HAVE_QTDBUS ${HAVE_QTDBUS} PARENT_SCOPE)
 
         option(WITH_DECORATIONS "Build Klassy window decorations for KWin" ON)
 
@@ -131,7 +143,7 @@ function(build_Qt6)
             PURPOSE "KCMUtils used for the configuration modules or the decoration and Qt Style"
         )
     else()
-        set(WITH_DECORATIONS OFF)
+        set(WITH_DECORATIONS ON)
     endif()
 
     find_package(Qt6 ${QT_MIN_VERSION} REQUIRED CONFIG COMPONENTS Widgets Core Svg Xml) #Svg and Xml only needed for settings (Qt6 only)
@@ -152,6 +164,8 @@ function(build_Qt6)
 
     set(BREEZE_HAVE_KSTYLE ${KF6FrameworkIntegration_FOUND})
     set(BREEZE_HAVE_QTQUICK ${Qt6Quick_FOUND})
+    set(BREEZE_HAVE_KSTYLE ${BREEZE_HAVE_KSTYLE} PARENT_SCOPE)
+    set(BREEZE_HAVE_QTQUICK ${BREEZE_HAVE_QTQUICK} PARENT_SCOPE)
 
     # https://bugreports.qt.io/browse/QTBUG-114706
     add_library(Qt::Core ALIAS Qt6::Core)

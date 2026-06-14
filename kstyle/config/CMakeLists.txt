@@ -1,5 +1,6 @@
 ### configuration plugin
 add_definitions(-DTRANSLATION_DOMAIN=\"klassy_style_config\")
+find_package(KF6KCMUtils CONFIG REQUIRED)
 set(kstyle_breeze_config_PART_SRCS breezestyleconfig.cpp ui/klassystyleconfig.qrc)
 
 set(kstyle_breeze_config_PART_SRCS ${kstyle_breeze_config_PART_SRCS} breezestyleconfigmodule.cpp )

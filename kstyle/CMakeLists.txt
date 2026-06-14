@@ -8,6 +8,12 @@ include_directories(${CMAKE_SOURCE_DIR}/libbreezecommon)
 include_directories(${CMAKE_BINARY_DIR}/libbreezecommon${QT_MAJOR_VERSION})
 
 ################# configuration #################
+if(TARGET Qt${QT_MAJOR_VERSION}::DBus)
+    set(HAVE_QTDBUS ON)
+else()
+    set(HAVE_QTDBUS OFF)
+endif()
+
 configure_file(config-breeze.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-breeze.h )
 
 ########### next target ###############
@@ -132,6 +138,9 @@ install(FILES klassy.themerc  DESTINATION  ${KDE_INSTALL_DATADIR}/kstyle/themes)
 
 ########### subdirectories ###############
 
-if (QT_MAJOR_VERSION EQUAL "6" AND TARGET "KF6::KCMUtils")
-    add_subdirectory(config)
+if(QT_MAJOR_VERSION EQUAL "6")
+    find_package(KF6KCMUtils CONFIG QUIET)
+    if(KF6KCMUtils_FOUND)
+        add_subdirectory(config)
+    endif()
 endif()

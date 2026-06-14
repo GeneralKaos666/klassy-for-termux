@@ -38,4 +38,7 @@ target_link_libraries(klassydecoration
 
 install(TARGETS klassydecoration DESTINATION ${KDE_INSTALL_PLUGINDIR}/${KDECORATION_PLUGIN_DIR})
 
-add_subdirectory(config)
+find_package(KF6KCMUtils CONFIG QUIET)
+if(KF6KCMUtils_FOUND)
+    add_subdirectory(config)
+endif()
